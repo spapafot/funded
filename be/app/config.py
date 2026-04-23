@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     github_token: str = ""
     cors_origin: str = "http://localhost:3000"
     dynamodb_endpoint_url: str = ""  # set to http://dynamodb-local:8000 in docker compose
+    turnstile_secret_key: str = ""
 
     class Config:
         env_file = ".env"

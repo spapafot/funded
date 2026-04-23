@@ -39,7 +39,7 @@ def _handle_external_provider(event: dict) -> dict:
     Google sign-in: if a native account exists for the same email,
     link the Google identity to it so both methods share one record.
     """
-    attrs = {a["Name"]: a["Value"] for a in event["request"]["userAttributes"]}
+    attrs = event["request"]["userAttributes"]
     email = attrs.get("email", "")
     username = event.get("userName", "")  # format: "google_<subject>"
 
@@ -82,7 +82,7 @@ def _handle_native_signup(event: dict) -> dict:
     Email/password sign-up: if a Google-only account already exists for
     this email, block the sign-up and direct the user to Google sign-in.
     """
-    attrs = {a["Name"]: a["Value"] for a in event["request"]["userAttributes"]}
+    attrs = event["request"]["userAttributes"]
     email = attrs.get("email", "")
 
     if not email:

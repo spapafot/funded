@@ -57,3 +57,8 @@ def slug_pk(slug: str) -> str:
     return f"SLUG#{slug}"
 
 SLUG_SK = "SLUG"
+
+def contact_pk(contact_id: str) -> str:
+    return f"CONTACT#{contact_id}"
+
+CONTACT_SK = "MESSAGE"
