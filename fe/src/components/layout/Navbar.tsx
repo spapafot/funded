@@ -23,13 +23,19 @@ export function Navbar() {
                 funded.gr
               </p>
               <p className="text-xs text-gray-500 font-mono mt-0.5">
-                Ελληνική κοινότητα καινοτομίας
+                Greek Founders Hub
               </p>
             </div>
           </Link>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-3">
+            <Link
+              href="/projects"
+              className="text-sm text-gray-600 hover:text-gray-900 font-medium transition"
+            >
+              Projects
+            </Link>
             {isAuthenticated ? (
               <>
                 {user?.role === "admin" && (
@@ -41,7 +47,7 @@ export function Navbar() {
                   </Link>
                 )}
                 <Link
-                  href="/?action=new"
+                  href="/projects?action=new"
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm text-sm font-medium"
                 >
                   <PlusCircle className="w-4 h-4" />
@@ -98,6 +104,13 @@ export function Navbar() {
         {/* Mobile menu */}
         {mobileOpen && (
           <nav className="md:hidden mt-3 pb-3 flex flex-col gap-1 border-t border-black/[0.06] pt-3">
+            <Link
+              href="/projects"
+              onClick={close}
+              className="px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-black/5 font-medium transition"
+            >
+              Projects
+            </Link>
             {isAuthenticated ? (
               <>
                 {user?.role === "admin" && (
@@ -110,7 +123,7 @@ export function Navbar() {
                   </Link>
                 )}
                 <Link
-                  href="/?action=new"
+                  href="/projects?action=new"
                   onClick={close}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-blue-600 hover:bg-blue-50 font-medium transition"
                 >

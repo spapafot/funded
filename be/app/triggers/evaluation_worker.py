@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime, timezone, timedelta
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIModel
@@ -39,14 +40,16 @@ Monthly Users: {project.get('monthlyUsers') or 'Not disclosed'}
 Category: {project['category']}
 
 DIMENSIONS:
-1. problemClarity (20%) — clear problem, obvious target user
-2. originality (20%) — differentiator, Greek/EU context
-3. completenessDeployment (25%) — live site, active GitHub, deployed vs idea
-4. commercialViability (20%) — monetization path, B2B preferred; if monthlyRevenue provided weight it heavily ("20k-50k"/"50k+" are very strong signals); use monthlyUsers to validate traction claims
-5. presentationQuality (15%) — well-written, credible
+1. problemClarity (20%) — is the problem real and clearly articulated? Is the target user obvious?
+2. originality (20%) — what is the differentiator? Consider Greek/EU market context.
+3. completenessDeployment (25%) — is there a live product? Score on whether something is built and deployed, not on whether the repo is public or private. A closed-source product with a live site scores the same as an open-source one.
+4. commercialViability (20%) — is there a plausible path to revenue? B2B preferred. If monthlyRevenue is provided treat it as a strong positive signal but NEVER penalise for low or undisclosed revenue — early-stage projects are not expected to have revenue yet. Use monthlyUsers only to validate traction claims if provided.
+5. presentationQuality (15%) — well-written, credible submission.
 
 totalScore = weighted average, rounded to nearest int.
-readinessLabel: "idea" (<30 or no site/GitHub), "prototype" (30–54), "launched" (55–74 with site), "scalable" (≥75 with traction)"""
+readinessLabel: "idea" (<30), "prototype" (30–54), "launched" (55–74, live product exists), "scalable" (≥75, clear traction or strong commercial signal)
+
+biggestGap: identify the single most important improvement across problemClarity, originality, and commercialViability only. Do NOT mention GitHub, repo visibility, revenue size, or user count as gaps — those are not weaknesses for an early-stage project."""
 
 
 def handle(event: dict, context) -> None:
@@ -61,8 +64,9 @@ def handle(event: dict, context) -> None:
         if not project:
             raise ValueError(f"Project {project_id} not found")
 
-        import asyncio
-        result = asyncio.run(_get_agent().run(_build_prompt(project)))
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(_get_agent().run(_build_prompt(project)))
         evaluation_result: EvaluationResult = result.output
 
         record = EvaluationRecord(
